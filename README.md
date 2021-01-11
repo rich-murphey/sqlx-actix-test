@@ -17,3 +17,6 @@ The errors seem to occur more consistently with:
 * a bulky json field or a very long (32KB) text field in the database
   record.  Json seems to trigger the issue more easily, and with a
   smaller record than a text field can.
+* streaming data from sqlx to actix responses (see the /junkstream
+  method).
+  
