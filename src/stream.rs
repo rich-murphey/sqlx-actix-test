@@ -102,7 +102,7 @@ where
             Dead => error!("stream polled in state: {:?}", self.state),
             _ => (),
         }
-        let mut buf = web::BytesMut::with_capacity(2048 + 1024);
+        let mut buf = web::BytesMut::with_capacity(self.size * 3 / 2);
         loop {
             match self.owned.with_stream_mut(|s| s.as_mut().poll_next(cx)) {
                 task::Poll::Ready(Some(Ok(rec))) => {
