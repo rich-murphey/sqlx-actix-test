@@ -9,7 +9,7 @@ To reproduce this, run the app and the test concurrently:
     cargo run --release &
     drill --stats -q --benchmark tests/local.yml
 
-It seems to help to have:
+The errors seem to occur more consistently with:
 
 * PgPoolOptions::test_before_acquire(false)
 * lots of connections.
