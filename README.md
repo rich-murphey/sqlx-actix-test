@@ -1,4 +1,4 @@
-This is an actix-web REST API server that uses sqlx to query postgres.
+This is an actix-web Json REST API server that uses sqlx to query postgres.
 
 The purpose of this app is to reproduce a protocol error.
 
@@ -11,10 +11,9 @@ To reproduce this, run the app and the test concurrently:
 
 It seems to help to have:
 
+* PgPoolOptions::test_before_acquire(false)
 * lots of connections.
 * more queries scheduled than available connections.
 * a bulky json field or a very long (32KB) text field in the database
   record.  Json seems to trigger the issue more easily, and with a
   smaller record than a text field can.
-
-

@@ -6,7 +6,6 @@ use std::env;
 
 mod error;
 mod junk;
-mod paglia;
 mod stream;
 
 #[actix_web::main]
@@ -23,6 +22,8 @@ async fn main() -> anyhow::Result<()> {
     };
     let pool = PgPoolOptions::new()
         .max_connections(max_conn)
+        // NB: setting test_before_acquire(true) eliminates the protocol errors.
+        .test_before_acquire(false)
         .connect_with(options)
         .await
         .context(db_url.clone())?;
@@ -37,8 +38,6 @@ async fn main() -> anyhow::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .service(junk::junk)
             .service(junk::junkstream)
-            .service(paglia::films)
-            .service(paglia::filmstream)
             .default_service(web::route().to(|| HttpResponse::NotFound()))
     })
     .bind(&addr)
