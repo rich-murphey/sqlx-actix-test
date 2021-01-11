@@ -1,0 +1,140 @@
+---
+# cargo install drill
+# drill --stats -q --benchmark tests/local.yml
+# threads: 24
+base: 'http://127.0.0.1:8080'
+concurrency: 96
+iterations: 2048
+
+rampup: 1
+
+plan:
+
+  - name: /filmstream
+    request:
+      url: /filmstream
+      method: POST
+      body: '{"offset":0,"limit":1000}'
+      headers:
+        Content-Type: 'application/json;charset=utf-8'
+  - name: /films
+    request:
+      url: /films
+      method: POST
+      body: '{"offset":0,"limit":1000}'
+      headers:
+        Content-Type: 'application/json;charset=utf-8'
+  - name: /filmstream
+    request:
+      url: /filmstream
+      method: POST
+      body: '{"offset":0,"limit":1000}'
+      headers:
+        Content-Type: 'application/json;charset=utf-8'
+  - name: /films
+    request:
+      url: /films
+      method: POST
+      body: '{"offset":0,"limit":1000}'
+      headers:
+        Content-Type: 'application/json;charset=utf-8'
+  - name: /filmstream
+    request:
+      url: /filmstream
+      method: POST
+      body: '{"offset":0,"limit":1000}'
+      headers:
+        Content-Type: 'application/json;charset=utf-8'
+  - name: /films
+    request:
+      url: /films
+      method: POST
+      body: '{"offset":0,"limit":1000}'
+      headers:
+        Content-Type: 'application/json;charset=utf-8'
+  - name: /filmstream
+    request:
+      url: /filmstream
+      method: POST
+      body: '{"offset":0,"limit":1000}'
+      headers:
+        Content-Type: 'application/json;charset=utf-8'
+  - name: /films
+    request:
+      url: /films
+      method: POST
+      body: '{"offset":0,"limit":1000}'
+      headers:
+        Content-Type: 'application/json;charset=utf-8'
+
+
+  # - name: /junkstream
+  #   request:
+  #     url: /junkstream
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junk
+  #   request:
+  #     url: /junk
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junkstream
+  #   request:
+  #     url: /junkstream
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junk
+  #   request:
+  #     url: /junk
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junkstream
+  #   request:
+  #     url: /junkstream
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junk
+  #   request:
+  #     url: /junk
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junkstream
+  #   request:
+  #     url: /junkstream
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junk
+  #   request:
+  #     url: /junk
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junkstream
+  #   request:
+  #     url: /junkstream
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'
+  # - name: /junk
+  #   request:
+  #     url: /junk
+  #     method: POST
+  #     body: '{"offset":0,"limit":256}'
+  #     headers:
+  #       Content-Type: 'application/json;charset=utf-8'

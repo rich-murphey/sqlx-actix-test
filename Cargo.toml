@@ -1,0 +1,32 @@
+[package]
+name = "sqlx-actix-test"
+version = "0.1.0"
+authors = ["rich-murphey <rich@murphey.org>"]
+edition = "2018"
+
+[dependencies]
+actix-http = "2.2.0"
+actix-rt = "1.1.1"
+actix-service = "1.0.6"
+actix-utils = "2.0.0"
+actix-web = "3.3.2"
+actix-web-codegen = "0.4.0"
+anyhow = "1.0.37"
+chrono = { version = "0.4", features = ["serde"] }
+dotenv = "0.15.0"
+env_logger = "0.8.2"
+futures = "0.3.9"
+futures-core = "0.3.9"
+futures-util = "0.3.9"
+lazy_static = "1.4.0"
+log = "0.4.11"
+ouroboros = "0.7.0"
+serde = { version = "1.0.118", features = ["derive"] }
+serde_derive = "1.0.118"
+serde_json = { version = "1.0.61", features = ["raw_value"] }
+sqlx = {version = "0.4.2", features = [ "postgres", "runtime-actix-rustls", "json", "chrono" ]}
+thiserror = "1.0.23"
+time = "0.2.24"
+# tokio = { version = "0.2", features = ["time", "rt-threaded", "macros"] }
+# bigdecimal_ = { version = "0.2.0", optional = true, package = "bigdecimal" }
+# rust_decimal = "1.8.1"
