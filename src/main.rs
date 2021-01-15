@@ -23,7 +23,7 @@ async fn main() -> anyhow::Result<()> {
     let pool = PgPoolOptions::new()
         .max_connections(max_conn)
         // NB: setting test_before_acquire(true) eliminates the protocol errors.
-        .test_before_acquire(false)
+        // .test_before_acquire(false)
         .connect_with(options)
         .await
         .context(db_url.clone())?;
