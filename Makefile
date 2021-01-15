@@ -24,3 +24,8 @@ hey:
 wrk:
 	wrk -c200 -t24 -d8s -s tests/junkstream.lua http://127.0.0.1:8080
 	wrk -c200 -t24 -d8s -s tests/junk.lua http://127.0.0.1:8080
+
+outdated:
+	-cargo +nightly udeps --release 2>&1 |grep -v 'Loading save analysis'
+	-cargo tree -d
+	-cargo outdated -R 2>&1 |grep -v rt-threaded
