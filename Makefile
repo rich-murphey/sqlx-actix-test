@@ -2,16 +2,18 @@
 run:
 	cargo run --release
 
-# this uses curl to shows a single item for each REST method.
+# drill measures throuput and average latency
+# this reproduces the protocol error.
 test:
+	drill --stats -q --benchmark tests/local.yml
+
+# check the output of each REST method.
+check:
 	curl -H "Content-Type: application/json" -d '{"offset":0,"limit":1}' http://127.0.0.1:8080/junk
 	@echo
 	curl -H "Content-Type: application/json" -d '{"offset":0,"limit":1}' http://127.0.0.1:8080/junkstream
 	@echo
 
-# drill measures throuput and average latency
-bench:
-	drill --stats -q --benchmark tests/local.yml
 
 # hey measures tail latency
 hey:
