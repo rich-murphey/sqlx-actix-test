@@ -60,6 +60,7 @@ pub struct OwnedStream<DB: sqlx::Database, Rec, Qry: 'static> {
     pub pool: Box<sqlx::Pool<DB>>,
     pub qry: Box<Qry>,
     #[borrows(pool, qry)]
+    #[not_covariant]            // borrow_stream() is not needed.
     pub stream: stream::BoxStream<'this, Result<Rec, sqlx::Error>>,
 }
 
