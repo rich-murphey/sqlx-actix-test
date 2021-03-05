@@ -24,7 +24,7 @@ ouroboros = "0.7.0"
 serde = { version = "1.0.118", features = ["derive"] }
 serde_derive = "1.0.118"
 serde_json = { version = "1.0.61", features = ["raw_value"] }
-sqlx = {version = "0.4.2", features = [ "postgres", "runtime-actix-rustls", "json", "chrono" ]}
+sqlx = {version = "0.5.1", features = [ "postgres", "runtime-actix-rustls", "json", "chrono" ]}
 thiserror = "1.0.23"
 time = "0.2.24"
 # tokio = { version = "0.2", features = ["time", "rt-threaded", "macros"] }
