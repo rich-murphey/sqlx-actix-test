@@ -1,9 +1,8 @@
-use super::error::ApiError;
-use crate::stream::*;
+use actix_web::error::ErrorInternalServerError;
 use actix_web::*;
-use futures::prelude::*;
 use serde::*;
 use sqlx::postgres::*;
+use sqlx_actix_streaming::*;
 
 //________________________________________________________________ Setup database
 const NROWS: usize = 10000;
@@ -96,63 +95,37 @@ pub struct JunkParams {
 async fn junk(
     web::Json(params): web::Json<JunkParams>,
     pool: web::Data<PgPool>,
-) -> Result<web::Json<Vec<JunkRec>>, ApiError> {
+) -> Result<web::Json<Vec<JunkRec>>, actix_web::Error> {
     Ok(web::Json(
         sqlx::query_as::<Postgres, JunkRec>("SELECT * FROM junk OFFSET $1 LIMIT $2;")
             .bind(params.offset)
             .bind(params.limit)
             .fetch_all(&**pool)
-            .await?,
+            .await
+            .map_err(ErrorInternalServerError)?
     ))
 }
 //________________________________________________________________ Streaming response
-#[derive(Debug)]
-struct JunkCtx {
-    pub params: JunkParams,
-}
-struct JunkQry {
-    pub sql: String,
-}
-impl Context<Postgres, JunkRec, JunkQry> for JunkCtx {
-    fn qry(&self) -> JunkQry {
-        let sql = "
-SELECT * FROM junk
-OFFSET $1 LIMIT $2"
-            .to_string();
-        JunkQry { sql }
-    }
-    fn stream<'a>(
-        &self,
-        pool: &'a PgPool,
-        qry: &'a JunkQry,
-    ) -> stream::BoxStream<'a, Result<JunkRec, sqlx::Error>> {
-        sqlx::query_as::<Postgres, JunkRec>(&qry.sql)
-            .bind(self.params.offset)
-            .bind(self.params.limit)
-            .fetch(pool)
-    }
-    #[inline(always)]
-    fn write<'a>(&self, rec: &'a JunkRec, buf: &'a mut web::BytesMut) -> Result<(), String> {
-        serde_json::to_writer(Writer(buf), &rec).map_err(|e| e.to_string())
-    }
-    #[inline(always)]
-    fn prefix(&self, buf: &mut web::BytesMut) {
-        buf.extend_from_slice(b"[");
-    }
-    #[inline(always)]
-    fn separator(&self, buf: &mut web::BytesMut) {
-        buf.extend_from_slice(b",");
-    }
-    #[inline(always)]
-    fn suffix(&self, buf: &mut web::BytesMut) {
-        buf.extend_from_slice(b"]");
-    }
-}
 
-#[post("/junkstream")]
-pub async fn junkstream<'a>(
-    web::Json(params): web::Json<JunkParams>,
-    pool: web::Data<PgPool>,
-) -> Result<HttpResponse, actix_web::Error> {
-    stream_response(pool.into_inner().as_ref().clone(), JunkCtx { params })
+#[get("/junkstream/{limit}/{offset}")]
+pub async fn junkstream(path: web::Path<(i64, i64)>, pool: web::Data<PgPool>) -> HttpResponse {
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .streaming(ByteStream::new(
+            SelfRefStream::build(
+                (pool.as_ref().clone(), path.into_inner()),
+                move |(pool, (limit, offset))| {
+                    sqlx::query_as!(
+                        JunkRec,
+                        "select * from junk offset $1 limit $2",
+                        offset,
+                        limit,
+                    )
+                    .fetch(pool)
+                },
+            ),
+            |buf: &mut BytesWriter, rec| {
+                serde_json::to_writer(buf, rec).map_err(ErrorInternalServerError)
+            },
+        ))
 }

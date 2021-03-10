@@ -5,19 +5,19 @@ authors = ["rich-murphey <rich@murphey.org>"]
 edition = "2018"
 
 [dependencies]
-actix-http = "3.0.0-beta.1"
-actix-rt = "2.0.0-beta.2"
-actix-service = "2.0.0-beta.3"
-actix-utils = "3.0.0-beta.1"
-actix-web = "4.0.0-beta.1"
+actix-http = "=3.0.0-beta.3"
+actix-rt = "2.1.0"
+actix-service = "2.0.0-beta.4"
+actix-utils = "3.0.0-beta.2"
+actix-web = "4.0.0-beta.3"
 actix-web-codegen = "0.4.0"
 anyhow = "1.0.38"
 dotenv = "0.15.0"
-env_logger = "0.8.2"
-futures = "0.3.12"
-log = "0.4.13"
-serde = { version = "1.0.119", features = ["derive"] }
-serde_json = { version = "1.0.61", features = ["raw_value"] }
-sqlx = { git = "https://github.com/lumeohq/sqlx", branch = "tokio-1.0", features = [ "postgres", "runtime-actix-rustls", "json", "chrono" ]}
-thiserror = "1.0.23"
-sqlx-actix-streaming = { path = "../sqlx-actix-streaming" }
+env_logger = "0.8.3"
+futures = "0.3.13"
+log = "0.4.14"
+serde = { version = "1.0.124", features = ["derive"] }
+serde_json = { version = "1.0.64", features = ["raw_value"] }
+sqlx = { version = "0.5.1", default-features = false, features = [ "runtime-actix-rustls", "macros", "postgres", "json", "chrono" ] }
+sqlx-actix-streaming = { git = "https://github.com/rich-murphey/sqlx-actix-streaming", features = ["macros", "runtime-actix-rustls", "sqlite" ] }
+thiserror = "1.0.24"

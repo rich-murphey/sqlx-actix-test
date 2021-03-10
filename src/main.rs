@@ -4,9 +4,7 @@ use log::*;
 use sqlx::postgres::*;
 use std::env;
 
-mod error;
 mod junk;
-mod stream;
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
@@ -30,7 +28,7 @@ async fn main() -> anyhow::Result<()> {
     junk::setup_db(&pool).await.context(db_url)?;
 
     // setup and run web server
-    let addr = env::var("SOCKETADDR").unwrap_or("127.0.0.1:8080".to_string());
+    let addr = env::var("SOCKETADDR").unwrap_or_else(|_| "127.0.0.1:8080".to_string());
     info!("this web server is listening at http://{}", &addr);
     HttpServer::new(move || {
         actix_web::App::new()

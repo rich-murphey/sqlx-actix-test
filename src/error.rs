@@ -31,7 +31,7 @@ pub enum ApiError {
 impl ResponseError for ApiError {
     fn error_response(&self) -> HttpResponse {
         ResponseBuilder::new(StatusCode::BAD_REQUEST)
-            .json(serde_json::json!({"error": self.to_string()}))
+            .json(&serde_json::json!({"error": self.to_string()}))
     }
 }
 
