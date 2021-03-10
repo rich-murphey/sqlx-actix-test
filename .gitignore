@@ -1,3 +1,4 @@
 /target
 /etc
 Cargo.lock
+output*
