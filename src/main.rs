@@ -36,7 +36,7 @@ async fn main() -> anyhow::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .service(junk::junk)
             .service(junk::junkstream)
-            .default_service(web::route().to(|| HttpResponse::NotFound()))
+            .default_service(web::route().to(HttpResponse::NotFound))
     })
     .bind(&addr)
     .context(addr.clone())?

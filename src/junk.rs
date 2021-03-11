@@ -102,30 +102,98 @@ async fn junk(
             .bind(params.limit)
             .fetch_all(&**pool)
             .await
-            .map_err(ErrorInternalServerError)?
+            .map_err(ErrorInternalServerError)?,
+    ))
+}
+#[post("/junk2")]
+async fn junk2(
+    web::Json(params): web::Json<JunkParams>,
+    pool: web::Data<PgPool>,
+) -> Result<web::Json<Vec<JunkRec>>, actix_web::Error> {
+    let mut conn = pool.acquire().await.map_err(ErrorInternalServerError)?;
+    Ok(web::Json(
+        sqlx::query_as::<Postgres, JunkRec>("SELECT * FROM junk OFFSET $1 LIMIT $2;")
+            .bind(params.offset)
+            .bind(params.limit)
+            .fetch_all(&mut conn)
+            .await
+            .map_err(ErrorInternalServerError)?,
     ))
 }
 //________________________________________________________________ Streaming response
 
 #[get("/junkstream/{limit}/{offset}")]
-pub async fn junkstream(path: web::Path<(i64, i64)>, pool: web::Data<PgPool>) -> HttpResponse {
-    HttpResponse::Ok()
+pub async fn junkstream(path: web::Path<(i64, i64)>, pool: web::Data<PgPool>) -> Result<HttpResponse, actix_web::Error> {
+    let conn = pool
+        .acquire()
+        .await
+        .map_err(ErrorInternalServerError)?;
+    Ok(HttpResponse::Ok()
+       .content_type("application/json")
+       .streaming(ByteStream::new(
+           SelfRefStream::build((conn, path.into_inner()), move |(pool, (limit, offset))| {
+               sqlx::query_as!(
+                   JunkRec,
+                   "select * from junk offset $1 limit $2",
+                   *offset,
+                   *limit,
+               )
+                   .fetch(pool)
+           }),
+           |buf: &mut BytesWriter, rec| {
+               serde_json::to_writer(buf, rec).map_err(ErrorInternalServerError)
+           },
+       )))
+}
+
+#[get("/junkstream2/{limit}/{offset}")]
+pub async fn junkstream2(
+    path: web::Path<(i64, i64)>,
+    pool: web::Data<PgPool>,
+) -> Result<HttpResponse, actix_web::Error> {
+    Ok(HttpResponse::Ok()
         .content_type("application/json")
         .streaming(ByteStream::new(
-            SelfRefStream::build(
-                (pool.as_ref().clone(), path.into_inner()),
-                move |(pool, (limit, offset))| {
-                    sqlx::query_as!(
-                        JunkRec,
-                        "select * from junk offset $1 limit $2",
-                        offset,
-                        limit,
-                    )
-                    .fetch(pool)
-                },
-            ),
+            RowStream::build(&**pool, path.into_inner(), move |conn, (limit, offset)| {
+                sqlx::query_as!(
+                    JunkRec,
+                    "select * from junk offset $1 limit $2",
+                    offset,
+                    limit,
+                )
+                .fetch(conn)
+            })
+            .await
+            .map_err(ErrorInternalServerError)?,
             |buf: &mut BytesWriter, rec| {
                 serde_json::to_writer(buf, rec).map_err(ErrorInternalServerError)
             },
-        ))
+        )))
+}
+
+#[get("/junkstream3/{limit}/{offset}")]
+pub async fn junkstream3(
+    path: web::Path<(i64, i64)>,
+    pool: web::Data<PgPool>,
+) -> Result<HttpResponse, actix_web::Error> {
+    let conn = pool
+        .acquire()
+        .await
+        .map_err(ErrorInternalServerError)?;
+    Ok(HttpResponse::Ok()
+        .content_type("application/json")
+        .streaming(ByteStream::new(
+            SelfRefStream::build((conn, path.into_inner()), move |(conn, (limit, offset))| {
+                sqlx::query_as!(
+                    JunkRec,
+                    "select * from junk offset $1 limit $2",
+                    *offset,
+                    *limit,
+                )
+                .fetch(conn)
+            }),
+            |buf: &mut BytesWriter, rec| {
+                serde_json::to_writer(buf, rec).map_err(ErrorInternalServerError)
+            },
+        )))
 }
