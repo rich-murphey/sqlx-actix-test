@@ -5,11 +5,11 @@ authors = ["rich-murphey <rich@murphey.org>"]
 edition = "2018"
 
 [dependencies]
-actix-http = "=3.0.0-beta.3"
+actix-http = "3.0.0-beta.4"
 actix-rt = "2.1.0"
 actix-service = "2.0.0-beta.4"
 actix-utils = "3.0.0-beta.2"
-actix-web = "4.0.0-beta.3"
+actix-web = "4.0.0-beta.4"
 actix-web-codegen = "0.4.0"
 anyhow = "1.0.38"
 dotenv = "0.15.0"
