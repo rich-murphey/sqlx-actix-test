@@ -67,18 +67,7 @@ pub async fn setup_table(pool: &DbPool) -> Result<(), sqlx::Error> {
     if cnt as usize == NROWS {
         return Ok(());
     }
-    sqlx::query("DROP TABLE IF EXISTS junk;")
-        .execute(pool)
-        .await?;
-    sqlx::query(
-        "
-CREATE TABLE junk (
-    id      BIGSERIAL PRIMARY KEY,
-    jsn     Jsonb NOT NULL
-);",
-    )
-    .execute(pool)
-    .await?;
+
     let jsn = serde_json::json!(
         {
             "firstName": "John",
