@@ -2,9 +2,9 @@ use actix_web::error::ErrorInternalServerError;
 use actix_web::*;
 use anyhow::Context;
 use serde::*;
+use sqlx::prelude::*;
 use sqlx_actix_streaming::*;
 use std::env;
-use sqlx::prelude::*;
 
 #[cfg(feature = "mysql")]
 pub type Db = sqlx::MySql;
@@ -40,7 +40,7 @@ pub async fn setup_db() -> anyhow::Result<DbPool> {
     Db::create_database(&db_url).await.ok();
 
     let options: DbConnectOptions = db_url.parse().context(db_url.clone())?;
-    let max_conn: u32 = match std::env::var("MAX_CONN") {
+    let max_conn: u32 = match env::var("MAX_CONN") {
         Ok(s) => s.parse().context(s)?,
         _ => 90, // default postgres conn limit is 100
     };
@@ -49,7 +49,7 @@ pub async fn setup_db() -> anyhow::Result<DbPool> {
         .connect_with(options)
         .await
         .context(db_url.clone())?;
-    sqlx::migrate::Migrator::new(std::env::current_exe()?.join("./migrations"))
+    sqlx::migrate::Migrator::new(env::current_exe()?.join("./migrations"))
         .await?
         .run(&pool)
         .await?;
