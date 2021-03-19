@@ -9,11 +9,8 @@ test:
 
 # check the output of each REST method.
 check:
-	curl -H "Content-Type: application/json" -d '{"offset":0,"limit":1}' http://127.0.0.1:8080/junk
-	@echo
-	curl -H "Content-Type: application/json" -d '{"offset":0,"limit":1}' http://127.0.0.1:8080/junkstream
-	@echo
-
+	ht -j http://127.0.0.1:8080/junk limit:=1 offset:=0
+	ht -j http://127.0.0.1:8080/junkstream/1/0
 
 # hey measures tail latency
 hey:

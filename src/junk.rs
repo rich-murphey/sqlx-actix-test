@@ -49,7 +49,7 @@ pub async fn setup_db() -> anyhow::Result<DbPool> {
         .connect_with(options)
         .await
         .context(db_url.clone())?;
-    sqlx::migrate::Migrator::new(env::current_exe()?.join("./migrations"))
+    sqlx::migrate::Migrator::new(env::current_dir()?.join("./migrations"))
         .await?
         .run(&pool)
         .await?;

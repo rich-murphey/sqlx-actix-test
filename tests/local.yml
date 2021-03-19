@@ -12,65 +12,8 @@ plan:
 
   - name: /junkstream
     request:
-      url: /junkstream
-      method: POST
-      body: '{"offset":0,"limit":256}'
-      headers:
-        Content-Type: 'application/json;charset=utf-8'
-  - name: /junk
-    request:
-      url: /junk
-      method: POST
-      body: '{"offset":0,"limit":256}'
-      headers:
-        Content-Type: 'application/json;charset=utf-8'
-  - name: /junkstream
-    request:
-      url: /junkstream
-      method: POST
-      body: '{"offset":0,"limit":256}'
-      headers:
-        Content-Type: 'application/json;charset=utf-8'
-  - name: /junk
-    request:
-      url: /junk
-      method: POST
-      body: '{"offset":0,"limit":256}'
-      headers:
-        Content-Type: 'application/json;charset=utf-8'
-  - name: /junkstream
-    request:
-      url: /junkstream
-      method: POST
-      body: '{"offset":0,"limit":256}'
-      headers:
-        Content-Type: 'application/json;charset=utf-8'
-  - name: /junk
-    request:
-      url: /junk
-      method: POST
-      body: '{"offset":0,"limit":256}'
-      headers:
-        Content-Type: 'application/json;charset=utf-8'
-  - name: /junkstream
-    request:
-      url: /junkstream
-      method: POST
-      body: '{"offset":0,"limit":256}'
-      headers:
-        Content-Type: 'application/json;charset=utf-8'
-  - name: /junk
-    request:
-      url: /junk
-      method: POST
-      body: '{"offset":0,"limit":256}'
-      headers:
-        Content-Type: 'application/json;charset=utf-8'
-  - name: /junkstream
-    request:
-      url: /junkstream
-      method: POST
-      body: '{"offset":0,"limit":256}'
+      url: /junkstream/256/0
+      method: GET
       headers:
         Content-Type: 'application/json;charset=utf-8'
   - name: /junk
