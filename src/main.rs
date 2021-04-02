@@ -8,7 +8,7 @@ mod junk;
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
-    env_logger::init();
+    env_logger::try_init()?;
     let pool = junk::setup_db().await?;
     let addr = env::var("SOCKETADDR").unwrap_or_else(|_| "127.0.0.1:8080".to_string());
     info!("this web server is listening at http://{}", &addr);

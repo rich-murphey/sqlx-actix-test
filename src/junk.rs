@@ -34,7 +34,7 @@ pub type DbPool = sqlx::Pool<Db>;
 
 //________________________________________________________________ Setup database
 pub async fn setup_db() -> anyhow::Result<DbPool> {
-    use sqlx::migrate::MigrateDatabase;
+   use sqlx::migrate::MigrateDatabase;
 
     let db_url = env::var("DATABASE_URL").context("DATABASE_URL")?;
     Db::create_database(&db_url).await.ok();
@@ -164,34 +164,8 @@ async fn junk2(
     ))
 }
 //________________________________________________________________ Streaming response
-
 #[get("/junkstream/{limit}/{offset}")]
 pub async fn junkstream(
-    path: web::Path<(i64, i64)>,
-    pool: web::Data<DbPool>,
-) -> Result<HttpResponse, actix_web::Error> {
-    Ok(HttpResponse::Ok()
-        .content_type("application/json")
-        .streaming(ByteStream::new(
-            RowStream::build(&**pool, path.into_inner(), move |conn, (limit, offset)| {
-                sqlx::query_as!(
-                    JunkRec,
-                    "select * from junk limit $1 offset $2 ",
-                    limit,
-                    offset,
-                )
-                .fetch(conn)
-            })
-            .await
-            .map_err(ErrorInternalServerError)?,
-            |buf: &mut BytesWriter, rec| {
-                serde_json::to_writer(buf, rec).map_err(ErrorInternalServerError)
-            },
-        )))
-}
-
-#[get("/junkstream2/{limit}/{offset}")]
-pub async fn junkstream2(
     path: web::Path<(i64, i64)>,
     pool: web::Data<DbPool>,
 ) -> Result<HttpResponse, actix_web::Error> {
@@ -216,9 +190,34 @@ pub async fn junkstream2(
         )))
 }
 
+// #[get("/junkstream2/{limit}/{offset}")]
+// pub async fn junkstream2(
+//     path: web::Path<(i64, i64)>,
+//     pool: web::Data<DbPool>,
+// ) -> Result<HttpResponse, actix_web::Error> {
+//     Ok(HttpResponse::Ok()
+//         .content_type("application/json")
+//         .streaming(ByteStream::new(
+//             RowStream::build(pool.as_ref().clone(), path.into_inner(), move |conn, (limit, offset)| {
+//                 sqlx::query_as!(
+//                     JunkRec,
+//                     "select * from junk limit $1 offset $2 ",
+//                     limit,
+//                     offset,
+//                 )
+//                 .fetch(conn)
+//             })
+//             .await
+//             .map_err(ErrorInternalServerError)?,
+//             |buf: &mut BytesWriter, rec| {
+//                 serde_json::to_writer(buf, rec).map_err(ErrorInternalServerError)
+//             },
+//         )))
+// }
+
 pub fn service(cfg: &mut web::ServiceConfig) {
     cfg.service(junk);
     cfg.service(junk2);
     cfg.service(junkstream);
-    cfg.service(junkstream2);
+    // cfg.service(junkstream2);
 }
